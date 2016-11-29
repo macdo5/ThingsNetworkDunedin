@@ -1,0 +1,101 @@
+{"timestamp": 1476944640, "temp": 0}
+{"timestamp": 1476944700, "temp": 5}
+{"timestamp": 1476989229, "temp": 11}
+{"timestamp": 1476989239, "temp": 13}
+{"timestamp": 1476989249, "temp": 2}
+{"timestamp": 1476989259, "temp": 19}
+{"timestamp": 1476989269, "temp": 16}
+{"timestamp": 1476989279, "temp": 5}
+{"timestamp": 1476989289, "temp": 0}
+{"timestamp": 1476989299, "temp": 15}
+{"timestamp": 1476991248, "temp": 8}
+{"timestamp": 1476991258, "temp": 24}
+{"timestamp": 1476991268, "temp": 4}
+{"timestamp": 1476991278, "temp": 24}
+{"timestamp": 1476991288, "temp": 13}
+{"timestamp": 1476991298, "temp": 1}
+{"timestamp": 1476991308, "temp": 20}
+{"timestamp": 1476991318, "temp": 19}
+{"timestamp": 1476991328, "temp": 24}
+{"timestamp": 1476991338, "temp": 4}
+{"timestamp": 1476991348, "temp": 5}
+{"timestamp": 1476991358, "temp": 19}
+{"timestamp": 1476991368, "temp": 12}
+{"timestamp": 1476991378, "temp": 6}
+{"timestamp": 1476991388, "temp": 2}
+{"timestamp": 1476991398, "temp": 1}
+{"timestamp": 1476991408, "temp": 12}
+{"timestamp": 1476991418, "temp": 24}
+{"timestamp": 1476991428, "temp": 17}
+{"timestamp": 1476991438, "temp": 8}
+{"timestamp": 1476991448, "temp": 8}
+{"timestamp": 1476991458, "temp": 21}
+{"timestamp": 1476991468, "temp": 17}
+{"timestamp": 1476991478, "temp": 3}
+{"timestamp": 1476991488, "temp": 6}
+{"timestamp": 1476991498, "temp": 0}
+{"timestamp": 1476991508, "temp": 22}
+{"timestamp": 1476991518, "temp": 20}
+{"timestamp": 1476991528, "temp": 12}
+{"timestamp": 1476991538, "temp": 19}
+{"timestamp": 1476991548, "temp": 14}
+{"timestamp": 1476991558, "temp": 7}
+{"timestamp": 1476991568, "temp": 20}
+{"timestamp": 1476991578, "temp": 3}
+{"timestamp": 1476991588, "temp": 4}
+{"timestamp": 1476991598, "temp": 18}
+{"timestamp": 1476991608, "temp": 9}
+{"timestamp": 1476991618, "temp": 13}
+{"timestamp": 1476991628, "temp": 16}
+{"timestamp": 1476991638, "temp": 1}
+{"timestamp": 1476991648, "temp": 7}
+{"timestamp": 1476991658, "temp": 20}
+{"timestamp": 1476991668, "temp": 24}
+{"timestamp": 1476991678, "temp": 20}
+{"timestamp": 1476991688, "temp": 22}
+{"timestamp": 1476991698, "temp": 12}
+{"timestamp": 1476991708, "temp": 15}
+{"timestamp": 1476991719, "temp": 13}
+{"timestamp": 1476991729, "temp": 10}
+{"timestamp": 1476991739, "temp": 20}
+{"timestamp": 1476991749, "temp": 14}
+{"timestamp": 1476991759, "temp": 20}
+{"timestamp": 1476991769, "temp": 18}
+{"timestamp": 1476991779, "temp": 9}
+{"timestamp": 1476991789, "temp": 22}
+{"timestamp": 1476991799, "temp": 8}
+{"timestamp": 1476991809, "temp": 22}
+{"timestamp": 1476991819, "temp": 14}
+{"timestamp": 1476991829, "temp": 18}
+{"timestamp": 1476991839, "temp": 11}
+{"timestamp": 1476991849, "temp": 16}
+{"timestamp": 1476991859, "temp": 8}
+{"timestamp": 1476991869, "temp": 17}
+{"timestamp": 1476991879, "temp": 16}
+{"timestamp": 1476991889, "temp": 4}
+{"timestamp": 1476991899, "temp": 6}
+{"timestamp": 1476991909, "temp": 11}
+{"timestamp": 1476991919, "temp": 11}
+{"timestamp": 1476991929, "temp": 6}
+{"timestamp": 1476991939, "temp": 7}
+{"timestamp": 1476991949, "temp": 13}
+{"timestamp": 1476991959, "temp": 15}
+{"timestamp": 1476991969, "temp": 5}
+{"timestamp": 1476991979, "temp": 1}
+{"timestamp": 1476991989, "temp": 11}
+{"Date": "10/26/16", "Temperature": 13.48, "Time": "04:06:00"}
+{"Date": "10/26/16", "Temperature": 14.94, "Time": "04:06:05"}
+{"Date": "10/26/16", "Temperature": 14.45, "Time": "04:06:10"}
+{"Date": "10/26/16", "Temperature": 13.96, "Time": "04:06:15"}
+{"Date": "10/26/16", "Temperature": 14.94, "Time": "04:06:25"}
+{"Date": "10/26/16", "Temperature": 14.45, "Time": "04:06:30"}
+{"Date": "10/26/16", "Temperature": 14.45, "Time": "04:06:35"}
+{"Date": "10/26/16", "Temperature": 14.94, "Time": "04:06:40"}
+{"Date": "10/26/16", "Temperature": 14.45, "Time": "04:06:45"}
+{"Date": "10/26/16", "Temperature": 14.94, "Time": "04:06:50"}
+{"Date": "10/26/16", "Temperature": 14.45, "Time": "04:06:55"}
+{"Date": "10/26/16", "Temperature": 14.94, "Time": "04:07:00"}
+{"Date": "10/26/16", "Temperature": 14.45, "Time": "04:07:10"}
+{"Date": "10/26/16", "Temperature": 15.43, "Time": "04:07:15"}
+{"Date": "10/26/16", "Temperature": 14.94, "Time": "04:07:20"}
+{"Date": "10/26/16", "Temperature": 15.92, "Time": "04:07:25"}
