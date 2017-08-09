@@ -6,6 +6,7 @@
 #--- Details At: https://iotbytes.wordpress.com/store-mqtt-data-from-sensors-into-sql-database/
 #------------------------------------------
 
+import datetime
 import json
 import paho.mqtt.client as mqtt
 #from store_Sensor_Data_to_DB import sensor_Data_Handler
@@ -15,7 +16,7 @@ from pymongo import MongoClient
 MQTT_Broker = "10.118.0.142"
 MQTT_Port = 1883
 Keep_Alive_Interval = 45
-MQTT_Topic = "application/#"
+MQTT_Topic = "application/+/node/+/rx" # display only the RX payloads for nodes
 
 #MongoDB settings
 # from http://api.mongodb.com/python/current/tutorial.html
@@ -35,7 +36,11 @@ def on_message(mosq, obj, msg):
 	print("MQTT Topic: " + msg.topic)  
 	print(msg.payload)
 	new_mqtt_data = json.loads(msg.payload)
-
+	print("time:")
+	print(new_mqtt_data['rxInfo'][0]['time'])
+	# from https://stackoverflow.com/questions/127803
+	# Take the string for 'time' and convert into ISO-datetime format 8601DZ
+	new_mqtt_data['rxInfo'][0]['time'] = datetime.datetime.strptime(new_mqtt_data['rxInfo'][0]['time'], "%Y-%m-%dT%H:%M:%S.%fZ")
 	#Add the MQTT data to MongoDB
 	print("inserting into duniot_database.mqtt_collection")
 	new_entry_id = mqtt_collection.insert_one(new_mqtt_data).inserted_id
