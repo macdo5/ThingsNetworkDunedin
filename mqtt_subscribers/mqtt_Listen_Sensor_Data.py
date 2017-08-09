@@ -6,14 +6,22 @@
 #--- Details At: https://iotbytes.wordpress.com/store-mqtt-data-from-sensors-into-sql-database/
 #------------------------------------------
 
+import json
 import paho.mqtt.client as mqtt
 #from store_Sensor_Data_to_DB import sensor_Data_Handler
+from pymongo import MongoClient
 
 # MQTT Settings 
 MQTT_Broker = "10.118.0.142"
 MQTT_Port = 1883
 Keep_Alive_Interval = 45
 MQTT_Topic = "application/#"
+
+#MongoDB settings
+# from http://api.mongodb.com/python/current/tutorial.html
+client = MongoClient()
+db = client.duniot_database
+mqtt_collection = db.duniot_collection
 
 #Subscribe to all Sensors at Base Topic
 def on_connect(mqttc, mosq, obj, rc):
@@ -25,8 +33,13 @@ def on_message(mosq, obj, msg):
 	# For details of "sensor_Data_Handler" function please refer "sensor_data_to_db.py"
 	print("MQTT Data Received...")
 	print("MQTT Topic: " + msg.topic)  
-	print("Data: %r" % msg.payload)
-	#sensor_Data_Handler(msg.topic, msg.payload)
+	print(msg.payload)
+	new_mqtt_data = json.loads(msg.payload)
+
+	#Add the MQTT data to MongoDB
+	print("inserting into duniot_database.mqtt_collection")
+	new_entry_id = mqtt_collection.insert_one(new_mqtt_data).inserted_id
+	print("Success. Entry ID is " + str(new_entry_id))
 
 def on_subscribe(mosq, obj, mid, granted_qos):
     pass
