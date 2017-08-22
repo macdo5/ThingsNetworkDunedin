@@ -1,10 +1,13 @@
-#------------------------------------------
-#--- Original Author: Pradeep Singh
-#--- Date: 20th January 2017
-#--- Version: 1.0
-#--- Python Ver: 2.7
-#--- Details At: https://iotbytes.wordpress.com/store-mqtt-data-from-sensors-into-sql-database/
-#------------------------------------------
+"""
+Original Author: Pradeep Singh
+Date: 20th January 2017
+Version: 1.0
+Python Ver: 2.7
+Details At: https://iotbytes.wordpress.com/store-mqtt-data-from-sensors-into-sql-database/
+This script subscribes to a LoRa MQTT broker, such as loraserver, Loriot or TTN.
+It processes the received MQTT message into a matching mongo database format and stores it.
+For mongo collection format and information, refer to documentation on GitHub.
+"""
 
 import datetime
 import json
@@ -16,7 +19,7 @@ from pymongo import MongoClient
 MQTT_Broker = "10.118.0.142"
 MQTT_Port = 1883
 Keep_Alive_Interval = 45
-MQTT_Topic = "application/+/node/+/rx" # display only the RX payloads for nodes
+MQTT_Topic = "application/#" # subscribe to all incoming messages that begin with application/
 
 # MongoDB settings
 # from http://api.mongodb.com/python/current/tutorial.html
@@ -24,24 +27,26 @@ client = MongoClient()
 db = client.duniot_database
 mqtt_collection = db.duniot_collection
 
-# Subscribe to all Sensors at Base Topic
+# Subscribe to the specified topic
 def on_connect(mqttc, mosq, obj, rc):
     mqttc.subscribe(MQTT_Topic, 0)
 
 
-# Save Data into DB Table
+# When the message is received, it is processed and stored in the database.
 def on_message(mosq, obj, msg):
     # This is the Master Call for saving MQTT Data into DB
     # For details of "sensor_Data_Handler" function please refer "sensor_data_to_db.py"
     print("MQTT Data Received...")
     print("MQTT Topic: " + msg.topic)
-    print(msg.payload)
+    print("MQTT Payload: " + msg.payload)
+    # create a json object from the received mqtt data
     new_mqtt_data = json.loads(msg.payload)
-    print("time:")
-    print(new_mqtt_data['rxInfo'][0]['time'])
+    # print the time that the gateway received the data.
+    print("time:" + new_mqtt_data['rxInfo'][0]['time'])
     # from https://stackoverflow.com/questions/127803
     # Take the string for 'time' and convert into ISO-datetime format 8601DZ
     new_mqtt_data['rxInfo'][0]['time'] = datetime.datetime.strptime(new_mqtt_data['rxInfo'][0]['time'], "%Y-%m-%dT%H:%M:%S.%fZ")
+
     # Add the MQTT data to MongoDB
     print("inserting into duniot_database.mqtt_collection")
     new_entry_id = mqtt_collection.insert_one(new_mqtt_data).inserted_id
@@ -52,7 +57,7 @@ def on_subscribe(mosq, obj, mid, granted_qos):
     pass
 
 mqttc = mqtt.Client()
-print("print connecting")
+print("connecting...")
 # Assign event callbacks
 mqttc.on_message = on_message
 mqttc.on_connect = on_connect
