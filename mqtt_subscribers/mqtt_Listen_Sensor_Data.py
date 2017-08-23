@@ -35,22 +35,56 @@ def on_connect(mqttc, mosq, obj, rc):
 # When the message is received, it is processed and stored in the database.
 def on_message(mosq, obj, msg):
     # This is the Master Call for saving MQTT Data into DB
-    # For details of "sensor_Data_Handler" function please refer "sensor_data_to_db.py"
     print("MQTT Data Received...")
     print("MQTT Topic: " + msg.topic)
     print("MQTT Payload: " + msg.payload)
     # create a json object from the received mqtt data
-    new_mqtt_data = json.loads(msg.payload)
+    message_json = json.loads(msg.payload)
     # print the time that the gateway received the data.
-    print("time:" + new_mqtt_data['rxInfo'][0]['time'])
+    print("time:" + message_json['rxInfo'][0]['time'])
     # from https://stackoverflow.com/questions/127803
     # Take the string for 'time' and convert into ISO-datetime format 8601DZ
-    new_mqtt_data['rxInfo'][0]['time'] = datetime.datetime.strptime(new_mqtt_data['rxInfo'][0]['time'], "%Y-%m-%dT%H:%M:%S.%fZ")
+    message_json['rxInfo'][0]['time'] = datetime.datetime.strptime(message_json['rxInfo'][0]['time'], "%Y-%m-%dT%H:%M:%S.%fZ")
 
     # Add the MQTT data to MongoDB
-    print("inserting into duniot_database.mqtt_collection")
-    new_entry_id = mqtt_collection.insert_one(new_mqtt_data).inserted_id
-    print("Success. Entry ID is " + str(new_entry_id))
+    # First, check that the device is already in the database.
+    # create a boolean object (1 is True, 0 is False) from the result of the database query
+    # Check the database if at least a single item exists with the matching criteria
+    # A combination of applicationID, devEUI and nodeName will ensure single unique nodes per application exist.
+    found = mqtt_collection.find({
+        "nodeName" : message_json['nodeName'],
+        "applicationID" : message_json['applicationID'],
+        "devEUI" : message_json['devEUI']
+    }).limit(1)
+    # returns a json object that is either populated or not populated
+    # dynamic JSON building in python (https://stackoverflow.com/questions/23110383)
+    if found["_id"] == "":  # id is null, therefore item does not exist in db
+        print("node not found in database, creating new node...")
+        node_entry = {}
+        node_entry['applicationName'] = message_json['applicationName']
+        node_entry['nodeName'] = message_json['nodeName']
+        node_entry['dataEntries'] = [
+            {
+                "data": message_json['rxInfo'][0]['data'],
+                "gwTime": message_json['rxInfo'][0]['time']
+            }
+        ]
+        node_entry['applicationID'] = message_json['applicationID']
+        print("inserting into duniot_database.mqtt_collection")
+        new_entry_id = mqtt_collection.insert_one(node_entry).inserted_id
+        print("Success. Entry ID is " + str(new_entry_id))
+    else:   # node exists, append data to node entry in db
+        print("extracting data")
+        # build the new node json:
+        data_entry = {}
+        data_entry["data"] = message_json['rxInfo'][0]['data']
+        data_entry["geTime"] = message_json['rxInfo'][0]['time']
+        # push the data onto the end of the dataEntries
+        print("pushing data to data entries in database")
+        mqtt_collection.update(
+            {"_id": found["_id"]}, {"$push": {"dataEntries": data_entry}}
+        )
+        print("node data entries updated")
 
 
 def on_subscribe(mosq, obj, mid, granted_qos):
