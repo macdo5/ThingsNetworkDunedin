@@ -25,7 +25,7 @@ MQTT_Topic = "application/#" # subscribe to all incoming messages that begin wit
 # from http://api.mongodb.com/python/current/tutorial.html
 client = MongoClient()
 db = client.duniot_database
-mqtt_collection = db.duniot_collection
+mqtt_collection = db.node_data
 
 # Subscribe to the specified topic
 def on_connect(mqttc, mosq, obj, rc):
@@ -70,9 +70,9 @@ def on_message(mosq, obj, msg):
             }
         ]
         node_entry['applicationID'] = message_json['applicationID']
-        print("inserting into duniot_database.mqtt_collection")
+        print("inserting into duniot_database.node_data")
         new_entry_id = mqtt_collection.insert_one(node_entry).inserted_id
-        print("Success. Entry ID is " + str(new_entry_id))
+        print("Success. Node ID is " + str(new_entry_id))
     else:   # node exists, append data to node entry in db
         print("extracting data")
         # build the new node json:
