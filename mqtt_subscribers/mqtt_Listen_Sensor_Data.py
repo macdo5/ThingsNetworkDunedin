@@ -86,7 +86,7 @@ def on_message(mosq, obj, msg):
         # build the new node json:
         data_entry = {}
         data_entry["data"] = message_json['data']
-        data_entry["geTime"] = message_json['rxInfo'][0]['time']
+        data_entry["gwTime"] = message_json['rxInfo'][0]['time']
         # create the json from the data_entry object
         #data_entry_json = json.dumps(data_entry, default=json_util.default)
         # push the data onto the end of the dataEntries
