@@ -30,6 +30,31 @@ client = MongoClient()
 db = client.duniot_database
 mqtt_collection = db.node_data
 
+
+class NodeEntry:
+
+    def __init__(self, devEUI, nodeName, applicationID, applicationName, data, time):
+        self.data = {}  # create an empty object
+        self.data['applicationName'] = applicationName
+        self.data['nodeName'] = nodeName
+        self.data['dataEntries'] = [
+            {
+                "data": data,
+                "gwTime": time
+            }
+        ]
+        self.data['applicationID'] = applicationID
+        self.data['devEUI'] = devEUI
+
+    # creates a new node with empty dataEntries array
+    def __init__(self, devEUI, nodeName, applicationID, applicationName):
+        self.data = {}  # create an empty object
+        self.data['applicationName'] = applicationName
+        self.data['nodeName'] = nodeName
+        self.data['dataEntries'] = []
+        self.data['applicationID'] = applicationID
+        self.data['devEUI'] = devEUI
+
 # Subscribe to the specified topic
 def on_connect(mqttc, mosq, obj, rc):
     mqttc.subscribe(MQTT_Topic, 0)
@@ -65,21 +90,16 @@ def on_message(mosq, obj, msg):
     # dynamic JSON building in python (https://stackoverflow.com/questions/23110383)
     if found.count() == 0:  # no collections exist in db matching the search criteria
         print("node not found in database, creating new node...")
-        node_entry = {} # create an empty object
-        node_entry['applicationName'] = message_json['applicationName']
-        node_entry['nodeName'] = message_json['nodeName']
-        node_entry['dataEntries'] = [
-            {
-                "data": message_json['data'],
-                "gwTime": message_json['rxInfo'][0]['time']
-            }
-        ]
-        node_entry['applicationID'] = message_json['applicationID']
-        node_entry['devEUI'] = message_json['devEUI']
+        new_node = NodeEntry(
+            message_json['devEUI'],
+            message_json['nodeName'],
+            message_json['applicationID'],
+            message_json['applicationName'],
+            message_json['data'],
+            message_json['rxInfo'][0]['time'])
         # create the json from the node_entry object
-        #node_entry_json = json.dumps(node_entry, default=json_util.default)
         print("inserting into duniot_database.node_data")
-        new_entry_id = mqtt_collection.insert_one(node_entry).inserted_id
+        new_entry_id = mqtt_collection.insert_one(new_node.data).inserted_id
         print("Success. Node ID is " + str(new_entry_id))
     else:   # at least one collection exists, add the data to the existing collection
         print("extracting data")
