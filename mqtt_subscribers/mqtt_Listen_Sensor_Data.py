@@ -14,6 +14,9 @@ import json
 import paho.mqtt.client as mqtt
 #from store_Sensor_Data_to_DB import sensor_Data_Handler
 from pymongo import MongoClient
+# http://api.mongodb.com/python/1.10.1/api/bson/json_util.html
+# Tools for using Python's json module with BSON documents
+from bson import json_util
 
 # MQTT Settings 
 MQTT_Broker = "10.118.0.142"
@@ -51,34 +54,42 @@ def on_message(mosq, obj, msg):
     # create a boolean object (1 is True, 0 is False) from the result of the database query
     # Check the database if at least a single item exists with the matching criteria
     # A combination of applicationID, devEUI and nodeName will ensure single unique nodes per application exist.
+    # query returns a Cursor object
     found = mqtt_collection.find({
         "nodeName" : message_json['nodeName'],
         "applicationID" : message_json['applicationID'],
         "devEUI" : message_json['devEUI']
     }).limit(1)
-    # returns a json object that is either populated or not populated
+    # get the number of items in the cursor
+    # from https://stackoverflow.com/questions/31077812
+    # from https://stackoverflow.com/questions/26549787
     # dynamic JSON building in python (https://stackoverflow.com/questions/23110383)
-    if found["_id"] == "":  # id is null, therefore item does not exist in db
+    if found.count() == 0:  # no collections exist in db matching the search criteria
         print("node not found in database, creating new node...")
-        node_entry = {}
+        node_entry = {} # create an empty object
         node_entry['applicationName'] = message_json['applicationName']
         node_entry['nodeName'] = message_json['nodeName']
         node_entry['dataEntries'] = [
             {
-                "data": message_json['rxInfo'][0]['data'],
+                "data": message_json['data'],
                 "gwTime": message_json['rxInfo'][0]['time']
             }
         ]
         node_entry['applicationID'] = message_json['applicationID']
+        node_entry['devEUI'] = message_json['devEUI']
+        # create the json from the node_entry object
+        #node_entry_json = json.dumps(node_entry, default=json_util.default)
         print("inserting into duniot_database.node_data")
         new_entry_id = mqtt_collection.insert_one(node_entry).inserted_id
         print("Success. Node ID is " + str(new_entry_id))
-    else:   # node exists, append data to node entry in db
+    else:   # at least one collection exists, add the data to the existing collection
         print("extracting data")
         # build the new node json:
         data_entry = {}
-        data_entry["data"] = message_json['rxInfo'][0]['data']
+        data_entry["data"] = message_json['data']
         data_entry["geTime"] = message_json['rxInfo'][0]['time']
+        # create the json from the data_entry object
+        #data_entry_json = json.dumps(data_entry, default=json_util.default)
         # push the data onto the end of the dataEntries
         print("pushing data to data entries in database")
         mqtt_collection.update(
