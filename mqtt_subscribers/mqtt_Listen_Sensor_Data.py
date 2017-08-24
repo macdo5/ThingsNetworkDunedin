@@ -55,11 +55,11 @@ def on_message(mosq, obj, msg):
     # Check the database if at least a single item exists with the matching criteria
     # A combination of applicationID, devEUI and nodeName will ensure single unique nodes per application exist.
     # query returns a Cursor object
-    found = mqtt_collection.findOne({
+    found = mqtt_collection.find({
         "nodeName" : message_json['nodeName'],
         "applicationID" : message_json['applicationID'],
         "devEUI" : message_json['devEUI']
-    })
+    }).limit(1)
     # get the number of items in the cursor
     # from https://stackoverflow.com/questions/26549787
     # dynamic JSON building in python (https://stackoverflow.com/questions/23110383)
@@ -93,7 +93,7 @@ def on_message(mosq, obj, msg):
         print("pushing data to data entries in database")
         # from https://stackoverflow.com/questions/31077812
         mqtt_collection.update(
-            {"_id": found.get('_id')}, {"$push": {"dataEntries": data_entry}}
+            {"_id": found[0].get('_id')}, {"$push": {"dataEntries": data_entry}}
         )
         print("node data entries updated")
 
