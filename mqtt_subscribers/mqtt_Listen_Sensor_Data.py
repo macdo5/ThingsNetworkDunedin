@@ -68,7 +68,7 @@ def on_message(mosq, obj, msg):
     # Take the string for 'time' and convert into ISO-datetime format 8601DZ
     data_entry = DataEntry(message_json['data'], datetime.datetime.strptime(message_json['rxInfo'][0]['time'], "%Y-%m-%dT%H:%M:%S.%fZ"))
     # print the time that the gateway received the data.
-    print("time:" + data_entry.data["time"])
+    print("time:" + str(data_entry.data["gwTime"]))
     # Add the MQTT data to MongoDB
     # First, check that the device is already in the database.
     # Check the database if at least a single item exists with the matching criteria
