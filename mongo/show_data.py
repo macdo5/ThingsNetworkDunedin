@@ -2,50 +2,28 @@ import datetime
 import json
 from pymongo import MongoClient
 from bson import json_util
+import numpy as np
+import matplotlib.pyplot as plt
+import base64
+import Tkinter
+
+# example from https://plot.ly/python/line-charts/
 
 client = MongoClient()
 db = client.duniot_database
 node_data = db.node_data
 
-class DataEntry:
+my_node = json_util.loads(json_util.dumps(node_data.find({"devEUI" : "0000000000000001"})))[0]["dataEntries"]
+dates = []
+datum = []
+for entry in my_node:
+    dates.append(entry["gwTime"])
+    y = base64.b64decode(entry["data"]).split()[2]
+    datum.append(float(y[2:]))
 
-    def __init__(self, mongoData):
-        self.data = {}
-        self.data["data"] = data
-        self.data["gwTime"] = time
+plt.xlabel('time')
+plt.ylabel('temperature')
+plt.plot(dates, datum)
+plt.show()
 
-class NodeEntry:
-
-    def __init__(self, mongoNode, dataEntries):
-        self.data = {}  # create an empty object
-        self.data['applicationName'] = mongoNode["applicationName"]
-        self.data['nodeName'] = mongoNode["nodeName"]
-        self.data['dataEntries'] = dataEntries
-        self.data['applicationID'] = mongoNode["applicationID"]
-        self.data['devEUI'] = mongoNode["devEUI"]
-
-    def get_latest_date(self):
-        now = datetime.datetime.now()
-        return max(date for date in self.data["dataEntries"]["gwTime"] if date < now)
-
-    def get_earliest_date(self):
-        return min(self.data["dataEntries"]["gwTime"])
-
-
-class DataEntry:
-
-    def __init__(self, mongoData):
-        self.data = {}
-        self.data["data"] = mongoData["data"]
-        self.data["gwTime"] = mongoData["time"]
-
-
-def get_node(devEUI):
-    found = node_data.find({
-        "devEUI": devEUI
-    }).limit(1)
-    if found.count() != 0:
-        jsonFound = json_util.loads(json_util.dumps(found))[0]
-        dataEntries =
-        node = NodeEntry(jsonFound)
-        return node
+# light, humidity, temperature
